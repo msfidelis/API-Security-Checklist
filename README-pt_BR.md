@@ -2,7 +2,7 @@
 | (中文版请戳这:[中文版](./README-zh.md))
 
 # API Security Checklist
-Lista das mais importantes medidas de segurança para o desenvolvimento, teste e publicação da sua API.
+Lista das mais importantes medidas de segurança para o desenvolvimento, teste e deploy da sua API.
 
 ------------------------------------------------------------------------------
 ## Autenticação (_Authentication_)
@@ -27,11 +27,13 @@ Lista das mais importantes medidas de segurança para o desenvolvimento, teste e
 - [ ] Use cabeçalho `HSTS` com SSL para evitar ataques _SSL Strip_.
 
 ## Requisição (_Input_)
-- [ ] Utilize o método HTTP apropriado para cada operação , `GET (obter)`, `POST (criar)`, `PUT (trocar/atualizar)` e `DELETE (apagar)`.
+- [ ] Utilize o método HTTP apropriado para cada operação , `GET (obter)`, `POST (criar)`, `PUT (trocar/atualizar)` e `DELETE (apagar)` e responda com `405 Method Not Allowed` se o método requisitado não existir no recurso acessado.
 - [ ] Valide o tipo de conteúdo informado no cabeçalho `Accept` da requisição (_Content Negotiation_) para permitir apenas os formatos suportados pela sua API  (ex. `application/xml`, `application/json` ... etc), respondendo com o status `406 Not Acceptable` se ele não for suportado.
 - [ ] Valide o tipo de conteúdo do conteúdo da requisição informado no cabeçalho `Content-Type` da requisição para permitir apenas os formatos suportados pela sua API (ex. `application/x-www-form-urlencoded`, `multipart/form-data, application/json` ... etc).
 - [ ] Valide o conteúdo da requisição para evitar as vulnerabilidades mais comuns (ex. `XSS`, `SQL-Injection`, `Remote Code Execution` ... etc).
+- Não use nenhum tipo de dado sensível (`credenciais`, `senhas`, `Security Tokens` e `API Keys` na URL. Use um Header de Autorização de preferência).
 - [ ] Não utilize nenhuma informação sensível (credenciais, senhas, _tokens_ de autenticação) na URL. Use o cabeçalho `Authorization` da requisição.
+- [ ] Use um serviço de `API Gateway` para habilitar serviços de Cache, Rate Limit, Spike Arrest e fazer deploy dos seus resousers da API dinamicamente.
 
 ## Processamento (_Processing_)
 - [ ] Verifique continuamente os _endpoints_ protegidos por autenticação para evitar falhas na proteção de acesso aos dados.
@@ -40,7 +42,7 @@ Lista das mais importantes medidas de segurança para o desenvolvimento, teste e
 - [ ] Se você estiver processando arquivos XML, verifique que _entity parsing_ não está ativada para evitar ataques de XML externo (XXE - _XML external entity attack_).
 - [ ] Se você estiver processando arquivos XML, verifique que _entity expansion_ não está ativada para evitar _Billion Laughs/XML bomb_ através de ataques exponenciais de expansão de XML.
 - [ ] Use CDN para _uploads_ de arquivos.
-- [ ] Se você estiver trabalhando com uma grande quantidade de dados, use _workers_ e _queues_ (fila de processos) para retornar uma resposta rapidamente e evitar o bloqueio de requisições HTTP. 
+- [ ] Se você estiver trabalhando com uma grande quantidade de dados, use _workers_ e _queues_ (fila de processos) para processar o máximo possível em background, retornar uma resposta mais rapidamente e evitar o bloqueio de requisições HTTP. 
 - [ ] Não se esqueça de desativar o modo de depuração (_DEBUG mode OFF_).
 
 ## Resposta (_Output_)
